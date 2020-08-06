@@ -42,7 +42,7 @@ class Faces extends React.Component {
     super(props)
     this.state = {
       happyCount: 1,
-      notHappyCount: 1,
+      sadCount: 1,
       open: false,
       openNot: false, 
       date: new Date()
@@ -90,14 +90,14 @@ class Faces extends React.Component {
 
 
   notHappyClicks = () => {
-    const { notHappyCount } = this.state
+    const { sadCount } = this.state
     firebase.firestore().collection("ratingCount").doc('sadCount')
     .set({
-      notHappyCount
+      sadCount
     })
     .then((res) => {
       this.setState({
-        notHappyCount: this.state.notHappyCount + 1,
+        sadCount: this.state.sadCount + 1,
         openNot: true
       },
         () => {
