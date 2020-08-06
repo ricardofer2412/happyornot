@@ -11,6 +11,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
+import firebase from '../Firebase/firebase'
 
 const classes = {
   faceContainer: {
@@ -40,10 +41,11 @@ class Faces extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      happyCount: 0,
-      notHappyCount: 0,
+      happyCount: 1,
+      notHappyCount: 1,
       open: false,
-      openNot: false
+      openNot: false, 
+      date: new Date()
     }
   }
   handleClickOpen = () => {
@@ -61,29 +63,52 @@ class Faces extends React.Component {
   };
 
 
-  happyClicks = () => {
-    this.setState({
-      happyCount: this.state.happyCount + 1,
-      open: true
-    },
-      () => {
-        setTimeout(() => {
-          this.setState({ open: false })
-        }, 10000);//5 Second delay   
-      })
+  happyClicks = (e) => {
+ 
+    const { happyCount } = this.state
+    firebase.firestore().collection("ratingCount").doc('happyCount')
+    .set({
+      happyCount
+    })
+    .then((res) => {
+      this.setState({
+        happyCount: this.state.happyCount + 1,
+        open: true
+      },
+        () => {
+          setTimeout(() => {
+            this.setState({ open: false })
+          }, 10000);//5 Second delay   
+        })
+    })
+    .catch(error => {
+      console.error("Error adding document: ", error);
+    });
+   
     console.log(this.state.happyCount)
   }
+
+
   notHappyClicks = () => {
-    this.setState({
-      notHappyCount: this.state.notHappyCount + 1,
-      openNot: true
+    const { notHappyCount } = this.state
+    firebase.firestore().collection("ratingCount").doc('sadCount')
+    .set({
+      notHappyCount
     })
-  }
-  sendForm = () => {
-    this.setState({
-      openNot: false
+    .then((res) => {
+      this.setState({
+        notHappyCount: this.state.notHappyCount + 1,
+        openNot: true
+      },
+        () => {
+          setTimeout(() => {
+            this.setState({ openNot: false })
+          }, 10000);//5 Second delay   
+        })
     })
-    console.log(this.state.notHappyCount)
+    .catch(error => {
+      console.error("Error adding document: ", error);
+    });
   }
 
 

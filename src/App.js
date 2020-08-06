@@ -9,7 +9,7 @@ class App extends React.Component {
 
       <Router>
         <Route exact path="/dashboard" component={Dashboard} />
-        <Route exact path="/rating" component={Faces} />
+        <Route exact path="/" component={Faces} />
       </Router>
 
 
