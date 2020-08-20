@@ -12,27 +12,29 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import firebase from '../Firebase/firebase'
+import "./Faces.css"
+import Footer from '../Footer/Footer';
 
 const classes = {
   faceContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 100
+
+
   },
   title: {
     color: 'gray'
   },
   mainContainer: {
-    marginTop: 50,
-    marginBottom: 50
+    flexGrow: 1,
   },
   titleContainer: {
 
   },
   paper: {
 
-    width: "90%"
+  },
+  dialog: {
+    // height: 400,
+    // width: 600
   }
 
 }
@@ -41,13 +43,24 @@ class Faces extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      happyCount: 1,
-      sadCount: 1,
+      happyCount: '',
+      sadCount: '',
       open: false,
-      openNot: false, 
-      date: new Date()
+      openNot: false,
+      date: new Date(),
+      name: '',
+      email: '',
+      phone: '',
+      comment: '',
+      sadReview: []
     }
   }
+  componentDidMount() {
+    this.getHappyCount()
+    this.getSadCount()
+    console.log('Current Count: ' + this.state.happyCount)
+  }
+
   handleClickOpen = () => {
     this.setState({ open: true }
       ,
@@ -62,143 +75,211 @@ class Faces extends React.Component {
     this.setState({ open: false });
   };
 
+  onDismiss = () => {
+    this.setState({ openNot: false })
+  }
 
-  happyClicks = (e) => {
- 
-    const { happyCount } = this.state
+  getHappyCount() {
+    const happyCount = []
     firebase.firestore().collection("ratingCount").doc('happyCount')
-    .set({
-      happyCount
-    })
-    .then((res) => {
-      this.setState({
-        happyCount: this.state.happyCount + 1,
-        open: true
-      },
-        () => {
-          setTimeout(() => {
-            this.setState({ open: false })
-          }, 10000);//5 Second delay   
-        })
-    })
-    .catch(error => {
-      console.error("Error adding document: ", error);
-    });
-   
+      .get().then((doc) => {
+        if (doc.exists) {
+          console.log(doc.data())
+          this.setState({
+            happyCount: doc.data().happyCount
+          })
+        }
+      })
+    console.log('happyCount' + happyCount)
+  }
+
+  getSadCount() {
+    const sadCount = []
+    firebase.firestore().collection("ratingCount").doc('sadCount')
+      .get().then((doc) => {
+        if (doc.exists) {
+          console.log(doc.data())
+          this.setState({
+            sadCount: doc.data().sadCount
+          })
+        }
+      })
+
+  }
+  happyClicks = (e) => {
+
+    const happyCount = this.state.happyCount + 1
+    firebase.firestore().collection("ratingCount").doc('happyCount')
+      .set({
+        happyCount
+      })
+      .then((res) => {
+        this.setState({
+          happyCount,
+          open: true
+        },
+          () => {
+            setTimeout(() => {
+              this.setState({ open: false })
+            }, 10000);//5 Second delay   
+          })
+      })
+      .catch(error => {
+        console.error("Error adding document: ", error);
+      });
     console.log(this.state.happyCount)
   }
-
-
   notHappyClicks = () => {
-    const { sadCount } = this.state
+    const sadCount = this.state.sadCount + 1
     firebase.firestore().collection("ratingCount").doc('sadCount')
-    .set({
-      sadCount
-    })
-    .then((res) => {
-      this.setState({
-        sadCount: this.state.sadCount + 1,
-        openNot: true
-      },
-        () => {
-          setTimeout(() => {
-            this.setState({ openNot: false })
-          }, 10000);//5 Second delay   
-        })
-    })
-    .catch(error => {
-      console.error("Error adding document: ", error);
-    });
+      .set({
+        sadCount
+      })
+      .then((res) => {
+        this.setState({
+          sadCount,
+          openNot: true
+        },
+          () => {
+            setTimeout(() => {
+              this.setState({ openNot: false })
+            }, 100000);//5 Second delay   
+          })
+      })
+      .catch(error => {
+        console.error("Error adding document: ", error);
+      });
   }
+
+  onSubmitReview = (e) => {
+    const { name, email, phone, comment } = this.state
+
+    firebase.firestore().collection("sadReviews")
+      .add({
+        name, email, phone, comment,
+
+      }).then(
+        this.setState({
+          name: '',
+          email: '',
+          phone: '',
+          comment: '',
+          openNot: false
+        })
+      )
+
+
+  }
+  onChange = (e) => {
+    const state = this.state;
+    state[e.target.name] = e.target.value;
+    this.setState(state);
+  };
 
 
   render() {
 
     return (
-      <Container maxWidth="lg" style={classes.mainContainer}>
-        <Paper elevation={3}>
-          <Container style={classes.titleContainer}>
-            <Typography style={classes.title} variant='h2' align='center'>PLEASE RATE YOUR EXPERIENCE TODAY</Typography>
-          </Container>
-          <Container style={classes.faceContainer}>
-            <img
-              src={happyFace}
-              alt="happyFace"
-              onClick={this.happyClicks}
-              style={{ height: 300, width: 300 }}
-            />
-            <img
-              src={notHappyFace}
-              alt="notHappyFace"
-              onClick={this.notHappyClicks}
-              style={{ height: 300, width: 300 }}
-            />
-          </Container>
-          <div>
-            <Dialog
-              open={this.state.openNot}
-              onClose={this.handleClose}
-              aria-labelledby="alert-dialog-title"
-              aria-describedby="alert-dialog-description"
-            >
-              <DialogTitle id="alert-dialog-title">{"YOUR OPINION IS IMPORTANT TO US"}</DialogTitle>
-              <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                  Let us do it right!
-            </DialogContentText>
+      <div className="container">
 
-                <TextField
-                  autoFocus
-                  margin="dense"
-                  id="name"
-                  label="Name"
-                  type="email"
-                  fullWidth
-                />
-                <TextField
-                  autoFocus
-                  margin="dense"
-                  id="name"
-                  label="Email Address"
-                  type="email"
-                  fullWidth
-                />
-                <TextField
-                  autoFocus
-                  margin="dense"
-                  id="name"
-                  label="Phone Number"
-                  type="email"
-                  fullWidth
-                />
-                <Button onClick={this.sendForm} color="primary">
-                  Send
+        <div className="title">
+          <h1 className="title__text" >PLEASE RATE YOUR EXPERIENCE TODAY</h1>
+        </div>
+        <div className="facesContainer">
+          <img
+            className="faces"
+            src={happyFace}
+            alt="happyFace"
+            onClick={this.happyClicks}
+          />
+          <img
+            className="faces"
+            src={notHappyFace}
+            alt="notHappyFace"
+            onClick={this.notHappyClicks}
+          />
+        </div>
+        <Footer />
+
+        <Dialog
+          style={classes.dialog}
+          open={this.state.openNot}
+          onClose={this.handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">{"YOUR OPINION IS IMPORTANT TO US"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Let us do it right!
+            </DialogContentText>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="name"
+              label="Name"
+              type="text"
+              fullWidth
+              InputProps={{ name: "name" }}
+              onChange={this.onChange}
+              value={this.state.name}
+            />
+            <TextField
+
+              margin="dense"
+              id="name"
+              label="Email Address"
+              type="email"
+              fullWidth
+              InputProps={{ name: "email" }}
+              onChange={this.onChange}
+              value={this.state.email}
+            />
+            <TextField
+              margin="dense"
+              id="name"
+              label="Phone Number"
+              type="email"
+              fullWidth
+              InputProps={{ name: "phone" }}
+              onChange={this.onChange}
+              value={this.state.phone}
+            />
+            <TextField
+              margin="dense"
+              id="standard-multiline-flexible"
+              label="Comments"
+              fullWidth
+              multiline
+              rowsMax={10}
+              InputProps={{ name: "comment" }}
+              onChange={this.onChange}
+              value={this.state.comment}
+            />
+            <Button onClick={this.onSubmitReview} color="primary">
+              Send
           </Button>
-              </DialogContent>
-
-            </Dialog>
-          </div>
-
-          <div>
-            <Dialog
-              open={this.state.open}
-              onClose={this.handleClose}
-              aria-labelledby="alert-dialog-title"
-              aria-describedby="alert-dialog-description"
-            >
-              <DialogTitle id="alert-dialog-title">{"THANK YOU"}</DialogTitle>
-              <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                  We've received your feedback.
-                  Have a nice day!
+            <Button onClick={this.onDismiss} color="primary">
+              Dismiss
+          </Button>
+          </DialogContent>
+        </Dialog>
+        <Dialog
+          style={{ marginTop: 25, marginBottom: 25, marginRight: 10, marginLeft: 10 }}
+          open={this.state.open}
+          onClose={this.handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">{"THANK YOU"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description" className="text__thanks">
+              We've received your feedback. 🎉 <br />
+              Have a nice day! 🎉
             </DialogContentText>
-              </DialogContent>
-
-            </Dialog>
-          </div>
-
-        </Paper>
-      </Container>
+          </DialogContent>
+        </Dialog>
+      </div>
 
 
     )

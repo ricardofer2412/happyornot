@@ -6,7 +6,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
-
+import "./Navbar.css"
 const styles = {
   root: {
     flexGrow: 1,
@@ -18,14 +18,17 @@ const styles = {
     marginLeft: -12,
     marginRight: 20,
   },
+  appBar: {
+
+  }
 };
 
 function ButtonAppBar(props) {
   const { classes } = props;
   return (
     <div className={classes.root}>
-      <AppBar position="static">
-        <Toolbar>
+      <AppBar position="static" >
+        <Toolbar className="navbar">
           <IconButton className={classes.menuButton} color="inherit" aria-label="Menu">
           </IconButton>
           <Typography variant="h6" color="inherit" className={classes.grow}>

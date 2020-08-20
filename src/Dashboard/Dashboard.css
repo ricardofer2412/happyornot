@@ -1,0 +1,78 @@
+.dashboard {
+ background-color: #090122;
+ height: 100vh;
+ overflow-y: overlay;
+}
+.counters{
+  display: flex;
+  justify-content: space-between;
+  margin-top: 50px;
+}
+.counts {
+  background-color: #0B1137;
+  width: 300px;
+  height: 150px;
+  border-radius: 10px;
+  padding: 10px
+}
+
+.counts> h1 {
+  color: white;
+  font-size: 30px;
+  font-weight: 300;
+  text-align: center;
+  ;
+
+}
+
+.counts__card > p {
+  color: white;
+  font-size: 50px;
+  font-weight: 200;
+}
+.counts-card-icon {
+  color: green;
+  transform: scale(3)
+
+}
+.counts-card-icon-down {
+  color: red;
+  transform: scale(3)
+
+}
+.counts-card-icon-messages {
+  color: yellow;
+  transform: scale(3)
+
+}
+.counts__card {
+  display: flex;
+  justify-content: space-between;
+  max-width: 200px;
+  margin: 10px auto;
+  align-items: center;
+  margin-top: 25px;
+}
+.table{
+  background-color: #0B1137;
+  margin-top: 50px; 
+  margin-bottom: 50px;
+  align-items: center;
+  padding:30px;
+  border-radius: 10px;
+  height: 400px;
+
+
+}
+.tablecell {
+  color: white
+}
+
+.deleteIcon {
+  color: #6d1b7b
+}
+.widgets {
+
+  margin-left: 75px;
+  margin-right: 75px;
+}

@@ -1,0 +1,38 @@
+.container {
+  background-color: #090122;
+  height: 100vh;
+}
+
+.facesContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  height: 75vh;
+}
+
+.faces {
+  width: 4500px;
+  height: 450px;
+  object-fit: contain;
+  margin: 10px auto;
+  
+
+}
+.faces:hover {
+  transition: transform 0.2s ease-in-out;
+  transform: scale(1.2) !important
+}
+
+.title__text {
+  color: white;
+  font-size: 65px;
+  text-align: center;
+  font-weight: 400;
+
+
+}
+.text__thanks {
+  font-size: 40px;
+}
+
